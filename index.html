@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengukur Cinta Sidik Jari</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .fingerprint-scanner {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ffffff 0%, #e0e0e0 100%);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            margin: 0 auto;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .fingerprint-scanner:hover {
+            transform: scale(1.05);
+        }
+        
+        .fingerprint-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("https://pomf2.lain.la/f/ny8egqr.jpg");
+            background-size: cover;
+            background-position: center;
+            border-radius: 50%;
+            opacity: 0.7;
+        }
+        
+        .scan-animation {
+            position: absolute;
+            top: -50%;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(0deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0) 100%);
+            animation: scanning 2s infinite;
+        }
+        
+        @keyframes scanning {
+            0% { top: -50%; }
+            100% { top: 100%; }
+        }
+        
+        .result-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 1s ease-in-out;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            border-radius: 10px;
+            background: #e0e0e0;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b 0%, #ff8e8e 50%, #ff6b6b 100%);
+            width: 0%;
+            transition: width 1.5s ease-in-out;
+            border-radius: 10px;
+        }
+        
+        .quality-meter {
+            margin-top: 30px;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: rgba(255,255,255,0.9);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .heart-beat {
+            animation: beat 1s infinite;
+        }
+        
+        @keyframes beat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="py-12 px-4">
+    <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-8">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-pink-600 mb-2">Pengukur Cinta Sidik Jari</h1>
+            <p class="text-gray-600">Tempatkan jari Anda untuk mengukur tingkat cinta Anda</p>
+        </div>
+        
+        <div class="fingerprint-scanner" id="fingerprintScanner">
+            <div class="fingerprint-pattern" alt="Ilustrasi pola sidik jari berbentuk spiral dengan detail halus dan pusat konsentris pada latar belakang putih lembut"></div>
+            <div class="scan-animation" id="scanAnimation" style="display: none;"></div>
+        </div>
+        
+        <div class="text-center mt-6">
+            <p class="text-gray-500 italic">Sentuh area scanner di atas dengan jari Anda</p>
+        </div>
+        
+        <div class="result-container" id="resultContainer">
+            <div class="py-6">
+                <h2 class="text-2xl font-semibold text-center mb-4">Hasil Analisis Cinta 💘</h2>
+                
+                <img src="https://hips.hearstapps.com/hmg-prod/images/screen-shot-2022-12-12-at-3-48-33-pm-1670878231.png?crop=0.7797927461139896xw:1xh;center,top&resize=980:*" alt="Ilustrasi hati merah berdenyut dengan partikel mengambang" class="mx-auto h-20 mb-4 heart-beat">
+                
+                <div class="text-center mb-6">
+                    <span class="text-4xl font-bold text-pink-600" id="lovePercentage">0%</span>
+                    <p class="text-gray-500 mt-2">Tingkat cinta Anda</p>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                
+                <div class="quality-meter">
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <p class="text-sm text-gray-500">Kesiapan Komitmen</p>
+                            <div class="flex items-center">
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-blue-500 h-2.5 rounded-full" id="commitmentMeter" style="width: 0%"></div>
+                                </div>
+                                <span class="ml-2 text-sm font-medium text-blue-500" id="commitmentValue">0%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Kedalaman Perasaan</p>
+                            <div class="flex items-center">
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-purple-500 h-2.5 rounded-full" id="feelingMeter" style="width: 0%"></div>
+                                </div>
+                                <span class="ml-2 text-sm font-medium text-purple-500" id="feelingValue">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <p class="text-sm text-gray-500">Analisis Sidik Jari:</p>
+                        <p class="text-sm mt-2 italic text-gray-600" id="fingerprintAnalysis"><span class="text-pink-600">Tidak ada data.</span> Silakan lakukan scan sidik jari terlebih dahulu.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-8 text-center text-sm text-gray-400">
+            <p>*Ini hanya permainan hiburan. Hasil tidak dapat dijadikan acuan ilmiah.</p>
+        </div>
+    </div>
+
+    <script>
+        const scanner = document.getElementById('fingerprintScanner');
+        const scanAnimation = document.getElementById('scanAnimation');
+        const resultContainer = document.getElementById('resultContainer');
+        const lovePercentage = document.getElementById('lovePercentage');
+        const progressFill = document.getElementById('progressFill');
+        const commitmentMeter = document.getElementById('commitmentMeter');
+        const feelingMeter = document.getElementById('feelingMeter');
+        const commitmentValue = document.getElementById('commitmentValue');
+        const feelingValue = document.getElementById('feelingValue');
+        const fingerprintAnalysis = document.getElementById('fingerprintAnalysis');
+        
+        scanner.addEventListener('click', () => {
+            // Memulai animasi scanning
+            scanAnimation.style.display = 'block';
+            resultContainer.style.maxHeight = '0';
+            
+            // Simulasi proses scanning
+            setTimeout(() => {
+                scanAnimation.style.display = 'none';
+                
+                // Hasil acak untuk tingkat cinta (80-100% untuk efek menyenangkan)
+                const loveScore = Math.floor(Math.random() * 21) + 80;
+                const commitmentScore = Math.floor(Math.random() * 21) + 70;
+                const feelingScore = Math.floor(Math.random() * 21) + 75;
+                
+                // Update tampilan hasil
+                lovePercentage.textContent = loveScore + '%';
+                progressFill.style.width = loveScore + '%';
+                commitmentMeter.style.width = commitmentScore + '%';
+                feelingMeter.style.width = feelingScore + '%';
+                commitmentValue.textContent = commitmentScore + '%';
+                feelingValue.textContent = feelingScore + '%';
+                
+                // Analisis sidik jari berdasarkan hasil
+                let analysis = "";
+                if (loveScore >= 95) {
+                    analysis = "Sidik jari Anda menunjukkan pola <span class='text-pink-600'>yang sangat langka</span> dengan tingkat energi cinta yang luar biasa tinggi. Anda adalah tipe orang yang mencintai sepenuh hati dan berkomitmen penuh dalam hubungan.";
+                } else if (loveScore >= 85) {
+                    analysis = "Pola sidik jari Anda menunjukkan <span class='text-pink-600'>kemampuan cinta yang mendalam</span>. Anda mampu membangun hubungan yang kuat dan bermakna dengan pasangan Anda.";
+                } else {
+                    analysis = "Sidik jari Anda menunjukkan pola <span class='text-pink-600'>cinta yang stabil dan konsisten</span>. Anda mungkin membutuhkan waktu lebih lama untuk membuka diri, tetapi ketika melakukannya, cinta Anda tulus.";
+                }
+                
+                fingerprintAnalysis.innerHTML = analysis;
+                
+                // Tampilkan hasil container dengan animasi
+                resultContainer.style.maxHeight = resultContainer.scrollHeight + 'px';
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
